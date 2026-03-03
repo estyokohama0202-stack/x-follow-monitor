@@ -10,19 +10,19 @@ LOGIN_ID = os.getenv("X_ID")
 LOGIN_PASS = os.getenv("X_PASS")
 WEBHOOK = os.getenv("DISCORD_WEBHOOK")
 
-
 def login(page):
-    page.goto("https://x.com/login")
-    page.wait_for_timeout(3000)
-
-    page.fill('input[name="text"]', LOGIN_ID)
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(3000)
-
-    page.fill('input[name="password"]', LOGIN_PASS)
-    page.keyboard.press("Enter")
+    page.goto("https://x.com/i/flow/login")
     page.wait_for_timeout(5000)
 
+    # ID入力
+    page.get_by_role("textbox").fill(LOGIN_ID)
+    page.keyboard.press("Enter")
+    page.wait_for_timeout(3000)
+
+    # パスワード入力
+    page.get_by_label("Password").fill(LOGIN_PASS)
+    page.keyboard.press("Enter")
+    page.wait_for_timeout(5000)
 
 def scroll(page):
     last_height = 0
