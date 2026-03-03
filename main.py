@@ -102,15 +102,25 @@ def notify(added, removed):
     requests.post(WEBHOOK, json=payload)
 
 def main():
-    for _ in range(3):  # リトライ
+    for _ in range(3):
         try:
             old = load_old()
             new = get_following()
 
-            added = list(set(new) - set(old))
-            removed = list(set(old) - set(new))
+            # 初回だけ「最新1人だけ通知」
+            if not old:
+                if new:
+                    notify([new[0]], [])
+                save(new)
+                return
 
-            notify(added, removed)
+            added = list(set(new) - set(old))
+
+            # 新規があれば「一番上だけ通知」
+            if added:
+                latest = new[0]  # ←ここがポイント
+                notify([latest], [])
+
             save(new)
             return
 
