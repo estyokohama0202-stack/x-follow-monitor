@@ -26,7 +26,7 @@ def login(page):
 
 def scroll(page):
     last_height = 0
-    for _ in range(15):  # スクロール回数（調整可）
+    for _ in range(15):
         page.mouse.wheel(0, 3000)
         time.sleep(2)
 
@@ -57,7 +57,9 @@ def get_following():
                 users.append(href.replace("/", ""))
 
         browser.close()
-        return list(set(users))
+
+        # 順番を保ったまま重複削除（重要）
+        return list(dict.fromkeys(users))
 
 
 def load_old():
@@ -101,25 +103,31 @@ def notify(added, removed):
 
     requests.post(WEBHOOK, json=payload)
 
+
 def main():
     for _ in range(3):
         try:
             old = load_old()
             new = get_following()
 
-            # 初回だけ「最新1人だけ通知」
+            print("OLD:", old[:5])
+            print("NEW:", new[:5])
+
+            # 初回だけ最新1人通知
             if not old:
                 if new:
                     notify([new[0]], [])
                 save(new)
                 return
 
-            added = list(set(new) - set(old))
+            # 順番を保った差分取得（重要）
+            added = [u for u in new if u not in old]
 
-            # 新規があれば「一番上だけ通知」
+            print("ADDED:", added)
+
+            # 最新1人だけ通知
             if added:
-                latest = new[0]  # ←ここがポイント
-                notify([latest], [])
+                notify([added[0]], [])
 
             save(new)
             return
@@ -129,9 +137,7 @@ def main():
             time.sleep(10)
 
     print("3回失敗")
-print("OLD:", old[:5])
-print("NEW:", new[:5])
-print("ADDED:", added if 'added' in locals() else "初回")
+
 
 if __name__ == "__main__":
     main()
