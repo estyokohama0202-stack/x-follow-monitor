@@ -23,7 +23,22 @@ def login(page):
     page.get_by_label("Password").fill(LOGIN_PASS)
     page.keyboard.press("Enter")
     page.wait_for_timeout(5000)
+def login(page):
+    page.goto("https://x.com/i/flow/login")
 
+    # ID入力待ち（ここが超重要）
+    page.wait_for_selector('input[name="text"]', timeout=60000)
+    page.fill('input[name="text"]', LOGIN_ID)
+    page.keyboard.press("Enter")
+
+    # パスワード待ち
+    page.wait_for_selector('input[name="password"]', timeout=60000)
+    page.fill('input[name="password"]', LOGIN_PASS)
+    page.keyboard.press("Enter")
+
+    # ログイン完了待ち
+    page.wait_for_timeout(5000)
+    
 def scroll(page):
     last_height = 0
     for _ in range(15):
