@@ -2,8 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY . .
-
+# 必須ライブラリ（←ここが超重要）
 RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     libnss3 \
@@ -15,30 +14,21 @@ RUN apt-get update && apt-get install -y \
     libxcomposite1 \
     libxdamage1 \
     libxrandr2 \
-    libxshmfence1 \
-    libdrm2 \
     libxfixes3 \
     libxext6 \
-    libx11-6 \
-    libxcb1 \
-    libxrender1 \
-    libfontconfig1 \
-    libpango-1.0-0 \
-    libcairo2 \
-    libatspi2.0-0 \
-    libdbus-1-3 \
-    libexpat1 \
-    libuuid1 \
-    libxcb-shm0 \
-    libxcursor1 \
     libxi6 \
     libxtst6 \
-    libnss3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
+    libpango-1.0-0 \
+    libcairo2 \
+    fonts-liberation \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
+COPY . .
+
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Playwright
 RUN python -m playwright install chromium
 
 CMD ["python", "main.py"]
