@@ -129,7 +129,9 @@ def main():
             time.sleep(10)
 
     print("3回失敗")
-
+print("OLD:", old[:5])
+print("NEW:", new[:5])
+print("ADDED:", added if 'added' in locals() else "初回")
 
 if __name__ == "__main__":
     main()
