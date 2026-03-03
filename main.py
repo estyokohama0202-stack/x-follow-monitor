@@ -76,16 +76,30 @@ def notify(added, removed):
     if not added and not removed:
         return
 
-    msg = ""
+    embeds = []
 
     if added:
-        msg += "🆕 フォロー追加:\n" + "\n".join(added) + "\n\n"
+        embeds.append({
+            "title": "🟢 DJSHIGEが新しくフォローしました",
+            "description": "\n".join([f"[{u}](https://x.com/{u})" for u in added]),
+            "color": 5763719,
+            "footer": {"text": "Follow Monitor"}
+        })
 
     if removed:
-        msg += "❌ フォロー解除:\n" + "\n".join(removed)
+        embeds.append({
+            "title": "🔴 DJSHIGEがフォロー解除しました",
+            "description": "\n".join([f"[{u}](https://x.com/{u})" for u in removed]),
+            "color": 15548997,
+            "footer": {"text": "Follow Monitor"}
+        })
 
-    requests.post(WEBHOOK, json={"content": msg})
+    payload = {
+        "content": "📡 フォロー変化検知",
+        "embeds": embeds
+    }
 
+    requests.post(WEBHOOK, json=payload)
 
 def main():
     for _ in range(3):  # リトライ
